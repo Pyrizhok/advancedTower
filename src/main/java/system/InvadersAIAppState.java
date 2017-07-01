@@ -1,0 +1,90 @@
+package system;
+
+import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
+import com.jme3.math.Vector3f;
+import com.simsilica.es.Entity;
+import com.simsilica.es.EntityData;
+import com.simsilica.es.EntitySet;
+import com.simsilica.es.Filters;
+import component.Model;
+import component.Position;
+
+public class InvadersAIAppState extends AbstractAppState {
+
+	private SimpleApplication app;
+	private EntityData ed;
+	private EntitySet invaders;
+	private float xDir;
+	private float yDir;
+	private int numberOfInvaders;
+
+	@Override
+	public void initialize(AppStateManager stateManager, Application app) {
+		super.initialize(stateManager, app);
+
+		this.app = (SimpleApplication) app;
+		this.ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
+
+		invaders = ed.getEntities(
+				Filters.fieldEquals(Model.class, "name", Model.INVADER),
+				Model.class,
+				Position.class);
+		xDir = 1f;
+		yDir = -1f;
+	}
+
+	public int getNumberOfInvaders() {
+		return numberOfInvaders;
+	}
+
+	@Override
+	public void update(float tpf) {
+		invaders.applyChanges();
+		wabbeling(tpf);
+		numberOfInvaders = invaders.size();
+	}
+
+	private void wabbeling(float tpf) {
+		float xMin = 0;
+		float xMax = 0;
+		float yMin = 0;
+		float yMax = 0;
+
+		for (Entity e : invaders) {
+			Vector3f location = e.get(Position.class).getLocation();
+			if (location.getX() < xMin) {
+				xMin = location.getX();
+			}
+			if (location.getX() > xMax) {
+				xMax = location.getX();
+			}
+			if (location.getY() < yMin) {
+				yMin = location.getY();
+			}
+			if (location.getY() > yMax) {
+				yMax = location.getY();
+			}
+			e.set(new Position(location.add(xDir * tpf * 2, yDir * tpf * 0.5f, 0), new Vector3f()));
+		}
+		if (xMax > 22) {
+			xDir = -1;
+		}
+		if (xMin < -22) {
+			xDir = 1;
+		}
+		if (yMax > 20) {
+			yDir = -1;
+		}
+		if (yMin < 0) {
+			yDir = 1;
+		}
+	}
+
+	@Override
+	public void cleanup() {
+		super.cleanup();
+	}
+}
