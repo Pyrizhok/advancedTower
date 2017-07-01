@@ -1,0 +1,50 @@
+group 'edu.asd'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+ext {
+    jmonkeyengine_version = '3.1.+'
+}
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+    jcenter { url "http://jcenter.bintray.com/" }
+    jcenter { url "http://dl.bintray.com/empirephoenix/VGS-OSS-Releases" }
+    jcenter { url "https://dl.bintray.com/jmonkeyengine/contrib/" }
+    jcenter { url "https://dl.bintray.com/davidb/jme3stuff/" }
+
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile("org.jmonkeyengine:jme3-core:$jmonkeyengine_version")
+    compile "org.jmonkeyengine:jme3-terrain:$jmonkeyengine_version"
+    compile "org.jmonkeyengine:jme3-bullet:$jmonkeyengine_version"
+    compile "org.jmonkeyengine:jme3-bullet-native:$jmonkeyengine_version"
+    compile "org.jmonkeyengine:jme3-desktop:$jmonkeyengine_version"
+    compile "org.jmonkeyengine:jme3-lwjgl:$jmonkeyengine_version"
+    compile 'com.jme3x:jfx:2.184.2016-04-30_145140-ccbd413'
+
+    compile 'com.simsilica:zay-es:1.2.1'
+    compile 'com.google.guava:guava:19.0'
+    compile 'org.slf4j:slf4j-api:1.7.13'
+
+    compile project(':assets')
+}
+
+project(":assets") {
+    apply plugin: "java"
+
+    buildDir = rootProject.file("build/assets")
+
+    sourceSets {
+        main {
+            resources {
+                srcDir '.'
+            }
+        }
+    }
+}
