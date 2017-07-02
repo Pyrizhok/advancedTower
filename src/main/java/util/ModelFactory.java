@@ -25,29 +25,51 @@ public class ModelFactory {
 		Material mat = new Material(assetManager, "assets/MatDefs/FogUnshaded.j3md");
 		ColorRGBA colorRGBA;
 		Node visual = new Node("Visual");
-		if (Model.DEFENDER.equals(name)) {
-			Geometry defenderGeometry = defineDefenderGeometry();
-			visual.attachChild(defenderGeometry);
-		} else if (Model.INVADER.equals(name)) {
-			colorRGBA = ColorRGBA.Green;
-			mat.setColor("Color", colorRGBA);
-			geom.setMaterial(mat);
-			visual.attachChild(geom);
-		} else if (Model.BULLET.equals(name)) {
-			Node model = (Node) assetManager.loadModel("Models/" + name + ".j3o");
-			visual.attachChild(model);
-		} else if (Model.CURSOR.equals(name)) {
-			colorRGBA = ColorRGBA.Yellow;
-			mat.setColor("Color", colorRGBA);
-			geom.setMaterial(mat);
-			visual.attachChild(geom);
-		} else {
-			colorRGBA = ColorRGBA.Pink;
-			geom.setMaterial(mat);
-			mat.setColor("Color", colorRGBA);
-			visual.attachChild(geom);
+		switch (name) {
+			case Model.DEFENDER:
+				visual.attachChild(defineDefenderGeometry());
+				break;
+			case Model.INVADER:
+				visual.attachChild(defineInvaderGeometry());
+				break;
+			case Model.BULLET:
+				visual.attachChild(defineBulletNode(name));
+				break;
+			case Model.CURSOR:
+				visual.attachChild(defineCursorGeometry());
+				break;
+			default:
+				colorRGBA = ColorRGBA.Pink;
+				geom.setMaterial(mat);
+				mat.setColor("Color", colorRGBA);
+				visual.attachChild(geom);
+				break;
 		}
 		return visual;
+	}
+
+	private Geometry defineCursorGeometry() {
+		Box box = new Box(1, 1, 1);
+		Geometry geometry = new Geometry("Box", box);
+		Material material = new Material(assetManager, "assets/MatDefs/FogUnshaded.j3md");
+		ColorRGBA colorRGBA = ColorRGBA.Yellow;
+		material.setColor("Color", colorRGBA);
+		geometry.setMaterial(material);
+		return geometry;
+	}
+
+	private Node defineBulletNode(String name) {
+		return (Node) assetManager.loadModel("Models/" + name + ".j3o");
+	}
+
+	private Geometry defineInvaderGeometry() {
+		Box box = new Box(Vector3f.ZERO, Vector3f.UNIT_XYZ);
+		Geometry geometry = new Geometry("Box", box);
+		Material material = new Material(assetManager, "assets/MatDefs/FogUnshaded.j3md");
+		ColorRGBA colorRGBA = ColorRGBA.Green;
+		material.setColor("Color", colorRGBA);
+		geometry.setMaterial(material);
+		return geometry;
 	}
 
 	private Geometry defineDefenderGeometry() {
