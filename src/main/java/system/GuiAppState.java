@@ -16,7 +16,6 @@ public class GuiAppState extends BaseAppState {
 	private GuiManager guiManager;
 	private FXMLHud gameHUD;
 
-
 	@Override
 	protected void initialize(Application app) {
 		Node guiNode = ((SimpleApplication) app).getGuiNode();

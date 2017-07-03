@@ -14,6 +14,7 @@ import component.Position;
 
 public class InvadersAIAppState extends AbstractAppState {
 
+	public static final String FIELD_NAME = "name";
 	private SimpleApplication app;
 	private EntityData ed;
 	private EntitySet invaders;
@@ -29,7 +30,7 @@ public class InvadersAIAppState extends AbstractAppState {
 		this.ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
 
 		invaders = ed.getEntities(
-				Filters.fieldEquals(Model.class, "name", Model.INVADER),
+				Filters.fieldEquals(Model.class, FIELD_NAME, Model.INVADER),
 				Model.class,
 				Position.class);
 		xDir = 1f;

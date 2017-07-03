@@ -12,9 +12,12 @@ import java.util.Random;
 
 public class GameAppState extends BaseAppState {
 
+	private static final Integer BOUND = 50;
+	private static final Integer DEFENCE_INVADER = 2;
+	private static final Integer MAX_NUMBER_OF_INVADERS = 100;
+	private static final Integer halfOfBound = BOUND / 2;
 	private EntityData ed;
 	private SimpleApplication app;
-	public static final Integer MAX_NUMBER_OF_INVADERS = 100;
 
 	@Override
 	protected void initialize(Application app) {
@@ -89,14 +92,15 @@ public class GameAppState extends BaseAppState {
 	public void update(float tpf) {
 
 		int numberOfInvaders = getState(InvadersAIAppState.class).getNumberOfInvaders();
+
 		if (numberOfInvaders < MAX_NUMBER_OF_INVADERS) {
 
 			EntityId invader = ed.createEntity();
 			Random rand = new Random();
-			int value = rand.nextInt(50) - 25;
-			int value2 = rand.nextInt(50) - 25;
+			int value = rand.nextInt(BOUND) - halfOfBound;
+			int value2 = rand.nextInt(BOUND) - halfOfBound;
 			this.ed.setComponents(invader,
-					new Defense(2),
+					new Defense(DEFENCE_INVADER),
 					new CollisionShape(1f),
 					new Position(new Vector3f(value, value2, 0), new Vector3f()),
 					new Model(Model.INVADER));

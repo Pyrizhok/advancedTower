@@ -13,6 +13,7 @@ import component.*;
 
 public class CollisionAppState extends AbstractAppState {
 
+	private static final int DIE_DECAY_DELTA_MILLIS = 1000;
 	private SimpleApplication app;
 	private EntityData ed;
 	private EntitySet attackingParts;
@@ -52,7 +53,7 @@ public class CollisionAppState extends AbstractAppState {
 						Vector3f location = defendingPart.get(Position.class).getLocation();
 						ed.setComponents(ed.createEntity(),
 								new Die(),
-								new Decay(1000),
+								new Decay(DIE_DECAY_DELTA_MILLIS),
 								new Position(location, new Vector3f()));
 					}
 				}

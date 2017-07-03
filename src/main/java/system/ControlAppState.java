@@ -22,6 +22,10 @@ public class ControlAppState extends AbstractAppState {
 	private static final String CURSOR_MOVE_LEFT = "CURSOR_MOVE_LEFT";
 	private static final String CURSOR_MOVE_UP = "CURSOR_MOVE_UP";
 	private static final String CURSOR_MOVE_DOWN = "CURSOR_MOVE_DOWN";
+	private static final Integer BULLET_ATTACK_POWER = 1;
+	private static final Integer BULLET_COLLISION_SHAPE = 1;
+	private static final Integer BULLET_SPEED = 20;
+	private static final Integer BULLET_DECAY_DELTA_MILLIS = 20000;
 
 
 	private EntityData ed;
@@ -30,34 +34,35 @@ public class ControlAppState extends AbstractAppState {
 	private Vector3f locationCursor;
 	private WatchedEntity watchedEntityDefender;
 	private WatchedEntity watchedEntityCursor;
-	private float speed = 1f;
+	private float speedDefender = 1f;
+	private float speedCursor = 1f;
 	private final AnalogListener analogListener = (String name, float value, float tpf) -> {
 		watchedEntityDefender.applyChanges();
 		watchedEntityCursor.applyChanges();
 
 		if (name.equals(DEFENDER_MOVE_LEFT)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() - speed, locationDefender.getY(), 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() - speedDefender, locationDefender.getY(), 0), new Vector3f()));
 		}
 		if (name.equals(DEFENDER_MOVE_RIGHT)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() + speed, locationDefender.getY(), 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() + speedDefender, locationDefender.getY(), 0), new Vector3f()));
 		}
 		if (name.equals(DEFENDER_MOVE_UP)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() + speed, 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() + speedDefender, 0), new Vector3f()));
 		}
 		if (name.equals(DEFENDER_MOVE_DOWN)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() - speed, 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() - speedDefender, 0), new Vector3f()));
 		}
 		if (name.equals(CURSOR_MOVE_RIGHT)) {
-			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX() + speed, locationCursor.getY(), 0), new Vector3f()));
+			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX() + speedCursor, locationCursor.getY(), 0), new Vector3f()));
 		}
 		if (name.equals(CURSOR_MOVE_LEFT)) {
-			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX() - speed, locationCursor.getY(), 0), new Vector3f()));
+			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX() - speedCursor, locationCursor.getY(), 0), new Vector3f()));
 		}
 		if (name.equals(CURSOR_MOVE_UP)) {
-			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX(), locationCursor.getY() + speed, 0), new Vector3f()));
+			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX(), locationCursor.getY() + speedCursor, 0), new Vector3f()));
 		}
 		if (name.equals(CURSOR_MOVE_DOWN)) {
-			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX(), locationCursor.getY() - speed, 0), new Vector3f()));
+			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX(), locationCursor.getY() - speedCursor, 0), new Vector3f()));
 		}
 		locationDefender = watchedEntityDefender.get(Position.class).getLocation();
 		locationCursor = watchedEntityCursor.get(Position.class).getLocation();
@@ -70,12 +75,12 @@ public class ControlAppState extends AbstractAppState {
 			Vector3f directionVector = locationCursor.subtract(locationDefender).normalize();
 			ed.setComponents(bullet,
 					new Model(Model.BULLET),
-					new Attack(1),
-					new CollisionShape(1),
+					new Attack(BULLET_ATTACK_POWER),
+					new CollisionShape(BULLET_COLLISION_SHAPE),
 					new Position(new Vector3f(locationDefender.getX(), locationDefender.getY(), locationDefender.getZ()), directionVector),
 					new Direction(directionVector),
-					new Speed(20),
-					new Decay(20000));
+					new Speed(BULLET_SPEED),
+					new Decay(BULLET_DECAY_DELTA_MILLIS));
 
 		}
 	};

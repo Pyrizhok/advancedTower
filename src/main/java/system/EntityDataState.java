@@ -24,6 +24,6 @@ public class EntityDataState extends AbstractAppState {
 	public void cleanup() {
 		entityData.close();
 		entityData = null;
-
 	}
+
 }
