@@ -8,7 +8,7 @@ public class Model implements EntityComponent {
 	public final static String INVADER = "INVADER";
 	public final static String BULLET = "Bullet";
 	public final static String CURSOR = "CURSOR";
-	public final static String FIELD = "CURSOR";
+	public final static String AREA = "AREA";
 
 
 	public Model(String name) {

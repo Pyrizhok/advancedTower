@@ -27,19 +27,18 @@ public class GameAppState extends BaseAppState {
 
 		this.ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
 
+		defineArea();
 		defineDefender();
 		defineInvaders();
-		defineArea();
 		defineCursor();
 
 	}
 
 	private void defineArea() {
 		EntityId gameArea = ed.createEntity();
-
 		this.ed.setComponents(gameArea,
 				new Position(new Vector3f(0, 0, 0), new Vector3f()),
-				new Model(Model.FIELD));
+				new Model(Model.AREA));
 	}
 
 	private void defineDefender() {
