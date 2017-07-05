@@ -42,6 +42,9 @@ public class ModelFactory {
 			case Model.AREA:
 				visual.attachChild(defineAreaGeometry());
 				break;
+			case Model.GATE:
+				visual.attachChild(defineGateGeometry());
+				break;
 			default:
 				colorRGBA = ColorRGBA.Pink;
 				geom.setMaterial(mat);
@@ -52,8 +55,18 @@ public class ModelFactory {
 		return visual;
 	}
 
+	private Spatial defineGateGeometry() {
+		Box box = new Box(Vector3f.ZERO, Vector3f.UNIT_XYZ);
+		Geometry geometry = new Geometry("Box", box);
+		Material material = new Material(assetManager, ASSETS_MAT_DEFS_FOG_UNSHADED_J3MD);
+		ColorRGBA colorRGBA = ColorRGBA.Cyan;
+		material.setColor("Color", colorRGBA);
+		geometry.setMaterial(material);
+		return geometry;
+	}
+
 	private Spatial defineAreaGeometry() {
-		Box box = new Box(Vector3f.ZERO, new Vector3f(50,50,-1));
+		Box box = new Box(Vector3f.ZERO, new Vector3f(50, 50, -1));
 		Geometry geometry = new Geometry("Box", box);
 		geometry.center();
 		Material material = new Material(assetManager, ASSETS_MAT_DEFS_FOG_UNSHADED_J3MD);
@@ -89,7 +102,7 @@ public class ModelFactory {
 
 	private Geometry defineDefenderGeometry() {
 		Material material = new Material(assetManager, ASSETS_MAT_DEFS_FOG_UNSHADED_J3MD);
-		ColorRGBA colorRGBA= ColorRGBA.DarkGray;
+		ColorRGBA colorRGBA = ColorRGBA.DarkGray;
 		Box box = new Box(Vector3f.ZERO, Vector3f.UNIT_XYZ);
 		Geometry defenderGeometry = new Geometry("Box", box);
 		material.setColor("Color", colorRGBA);

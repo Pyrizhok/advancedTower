@@ -9,6 +9,7 @@ public class Model implements EntityComponent {
 	public final static String BULLET = "Bullet";
 	public final static String CURSOR = "CURSOR";
 	public final static String AREA = "AREA";
+	public final static String GATE= "GATE";
 
 
 	public Model(String name) {

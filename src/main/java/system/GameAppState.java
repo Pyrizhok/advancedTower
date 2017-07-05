@@ -13,6 +13,7 @@ import java.util.Random;
 public class GameAppState extends BaseAppState {
 
 	private static final Integer BOUND = 50;
+	private static final Integer NUMBER_OF_GATES = 4;
 	private static final Integer DEFENCE_INVADER = 2;
 	private static final Integer MAX_NUMBER_OF_INVADERS = 100;
 	private static final Integer halfOfBound = BOUND / 2;
@@ -28,10 +29,30 @@ public class GameAppState extends BaseAppState {
 		this.ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
 
 		defineArea();
+		defineGate();
 		defineDefender();
 		defineInvaders();
 		defineCursor();
 
+	}
+
+	private void defineGate() {
+		EntityId gate1 = ed.createEntity();
+		this.ed.setComponents(gate1,
+				new Position(new Vector3f(25, 25, 0), new Vector3f()),
+				new Model(Model.GATE));
+		EntityId gate2 = ed.createEntity();
+		this.ed.setComponents(gate2,
+				new Position(new Vector3f(-25, -25, 0), new Vector3f()),
+				new Model(Model.GATE));
+		EntityId gate3 = ed.createEntity();
+		this.ed.setComponents(gate3,
+				new Position(new Vector3f(25, -25, 0), new Vector3f()),
+				new Model(Model.GATE));
+		EntityId gate4 = ed.createEntity();
+		this.ed.setComponents(gate4,
+				new Position(new Vector3f(-25, 25, 0), new Vector3f()),
+				new Model(Model.GATE));
 	}
 
 	private void defineArea() {
