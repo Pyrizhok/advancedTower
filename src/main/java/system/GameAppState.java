@@ -8,15 +8,11 @@ import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import component.*;
 
-import java.util.Random;
-
 public class GameAppState extends BaseAppState {
 
-	private static final Integer BOUND = 50;
-	private static final Integer NUMBER_OF_GATES = 4;
-	private static final Integer DEFENCE_INVADER = 2;
-	private static final Integer MAX_NUMBER_OF_INVADERS = 100;
-	private static final Integer halfOfBound = BOUND / 2;
+	public static final Integer BOUND = 50;
+	public static final Integer DEFENCE_INVADER = 2;
+	public static final Integer MAX_NUMBER_OF_INVADERS = 10;
 	private EntityData ed;
 	private SimpleApplication app;
 
@@ -29,30 +25,9 @@ public class GameAppState extends BaseAppState {
 		this.ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
 
 		defineArea();
-		defineGate();
 		defineDefender();
-		defineInvaders();
 		defineCursor();
 
-	}
-
-	private void defineGate() {
-		EntityId gate1 = ed.createEntity();
-		this.ed.setComponents(gate1,
-				new Position(new Vector3f(25, 25, 0), new Vector3f()),
-				new Model(Model.GATE));
-		EntityId gate2 = ed.createEntity();
-		this.ed.setComponents(gate2,
-				new Position(new Vector3f(-25, -25, 0), new Vector3f()),
-				new Model(Model.GATE));
-		EntityId gate3 = ed.createEntity();
-		this.ed.setComponents(gate3,
-				new Position(new Vector3f(25, -25, 0), new Vector3f()),
-				new Model(Model.GATE));
-		EntityId gate4 = ed.createEntity();
-		this.ed.setComponents(gate4,
-				new Position(new Vector3f(-25, 25, 0), new Vector3f()),
-				new Model(Model.GATE));
 	}
 
 	private void defineArea() {
@@ -70,19 +45,6 @@ public class GameAppState extends BaseAppState {
 				new Attack(1),
 				new Position(new Vector3f(0, -20, 0), new Vector3f()),
 				new Model(Model.DEFENDER));
-	}
-
-	private void defineInvaders() {
-		for (int x = -20; x < 20; x += 4) {
-			for (int y = 0; y < 20; y += 4) {
-				EntityId invader = ed.createEntity();
-				this.ed.setComponents(invader,
-						new Defense(2),
-						new CollisionShape(1f),
-						new Position(new Vector3f(x, y, 0), new Vector3f()),
-						new Model(Model.INVADER));
-			}
-		}
 	}
 
 	private void defineCursor() {
@@ -110,21 +72,6 @@ public class GameAppState extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
-
-		int numberOfInvaders = getState(InvadersAIAppState.class).getNumberOfInvaders();
-
-		if (numberOfInvaders < MAX_NUMBER_OF_INVADERS) {
-
-			EntityId invader = ed.createEntity();
-			Random rand = new Random();
-			int value = rand.nextInt(BOUND) - halfOfBound;
-			int value2 = rand.nextInt(BOUND) - halfOfBound;
-			this.ed.setComponents(invader,
-					new Defense(DEFENCE_INVADER),
-					new CollisionShape(1f),
-					new Position(new Vector3f(value, value2, 0), new Vector3f()),
-					new Model(Model.INVADER));
-		}
 	}
 
 }

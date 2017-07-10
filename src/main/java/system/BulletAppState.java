@@ -39,8 +39,8 @@ public class BulletAppState extends AbstractAppState {
 			Direction direction = e.get(Direction.class);
 			Speed speed = e.get(Speed.class);
 			float distance = tpf * speed.getSpeed();
-			Vector3f whereToMove = direction.getLocation().mult(distance);
-			Position newPosition = new Position(position.getLocation().add(whereToMove), direction.getLocation());
+			Vector3f whereToMove = direction.getVectorNormalized().mult(distance);
+			Position newPosition = new Position(position.getLocation().add(whereToMove), direction.getVectorNormalized());
 			e.set(newPosition);
 		});
 	}

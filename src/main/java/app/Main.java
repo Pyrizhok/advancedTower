@@ -32,6 +32,7 @@ public class Main extends SimpleApplication {
 				new EntityDataState(entityData),
 				new InvadersAIAppState(),
 				new GameAppState(),
+				new GateSystem(),
 				new CollisionAppState(),
 				new BulletAppState(),
 				new DecayAppState(),

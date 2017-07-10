@@ -10,6 +10,7 @@ import com.jme3.input.controls.*;
 import com.jme3.math.Vector3f;
 import com.simsilica.es.*;
 import component.*;
+import configurations.Constants;
 
 public class ControlAppState extends AbstractAppState {
 
@@ -72,13 +73,13 @@ public class ControlAppState extends AbstractAppState {
 			watchedEntityDefender.applyChanges();
 			watchedEntityCursor.applyChanges();
 			EntityId bullet = ed.createEntity();
-			Vector3f directionVector = locationCursor.subtract(locationDefender).normalize();
+			Vector3f directionVectorNormalized = locationCursor.subtract(locationDefender).normalize();
 			ed.setComponents(bullet,
 					new Model(Model.BULLET),
 					new Attack(BULLET_ATTACK_POWER),
 					new CollisionShape(BULLET_COLLISION_SHAPE),
-					new Position(new Vector3f(locationDefender.getX(), locationDefender.getY(), locationDefender.getZ()), directionVector),
-					new Direction(directionVector),
+					new Position(new Vector3f(locationDefender.getX(), locationDefender.getY(), locationDefender.getZ()), directionVectorNormalized),
+					new Direction(directionVectorNormalized, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
 					new Speed(BULLET_SPEED),
 					new Decay(BULLET_DECAY_DELTA_MILLIS));
 
