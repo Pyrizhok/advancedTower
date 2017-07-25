@@ -23,6 +23,7 @@ public class ControlAppState extends AbstractAppState {
 	private static final String CURSOR_MOVE_LEFT = "CURSOR_MOVE_LEFT";
 	private static final String CURSOR_MOVE_UP = "CURSOR_MOVE_UP";
 	private static final String CURSOR_MOVE_DOWN = "CURSOR_MOVE_DOWN";
+	private static final String MOUSE_LEFT_BUTTON_CLICK = "MOUSE_LEFT_BUTTON_CLICK";
 	private static final Integer BULLET_ATTACK_POWER = 1;
 	private static final Integer BULLET_COLLISION_SHAPE = 1;
 	private static final Integer BULLET_SPEED = 20;
@@ -69,7 +70,22 @@ public class ControlAppState extends AbstractAppState {
 		locationCursor = watchedEntityCursor.get(Position.class).getLocation();
 	};
 	private final ActionListener actionListener = (String name, boolean isPressed, float tpf) -> {
+		watchedEntityDefender.applyChanges();
+		watchedEntityCursor.applyChanges();
 		if (name.equals(SHOOT) && !isPressed) {
+			EntityId bullet = ed.createEntity();
+			Vector3f directionVectorNormalized = locationCursor.subtract(locationDefender).normalize();
+			ed.setComponents(bullet,
+					new Model(Model.BULLET),
+					new Attack(BULLET_ATTACK_POWER),
+					new CollisionShape(BULLET_COLLISION_SHAPE),
+					new Position(new Vector3f(locationDefender.getX(), locationDefender.getY(), locationDefender.getZ()), directionVectorNormalized),
+					new Direction(directionVectorNormalized, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
+					new Speed(BULLET_SPEED),
+					new Decay(BULLET_DECAY_DELTA_MILLIS));
+
+		}
+		if (name.equals(MOUSE_LEFT_BUTTON_CLICK) && !isPressed) {
 			watchedEntityDefender.applyChanges();
 			watchedEntityCursor.applyChanges();
 			EntityId bullet = ed.createEntity();
@@ -138,10 +154,12 @@ public class ControlAppState extends AbstractAppState {
 		);
 
 		this.app.getInputManager().addMapping(SHOOT,
-				new KeyTrigger(KeyInput.KEY_SPACE),
+				new KeyTrigger(KeyInput.KEY_SPACE));
+
+		this.app.getInputManager().addMapping(MOUSE_LEFT_BUTTON_CLICK,
 				new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 
-		this.app.getInputManager().addListener(actionListener, SHOOT);
+		this.app.getInputManager().addListener(actionListener, SHOOT, MOUSE_LEFT_BUTTON_CLICK);
 	}
 
 	@Override

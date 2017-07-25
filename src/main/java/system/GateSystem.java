@@ -25,6 +25,10 @@ public class GateSystem extends BaseAppState {
 	private Vector3f gateCoordinates;
 	private Integer day;
 
+	private static float INVADER_CREATION_TIMEOUT = 5f;
+	public float timePassedFromCreation = 0f;
+
+
 	@Override
 	protected void initialize(Application app) {
 		this.app = (SimpleApplication) app;
@@ -54,8 +58,9 @@ public class GateSystem extends BaseAppState {
 	public void update(float tpf) {
 		int numberOfInvaders = getState(InvadersAIAppState.class).getNumberOfInvaders();
 
-		if (numberOfInvaders < MAX_NUMBER_OF_INVADERS) {
-
+		timePassedFromCreation += tpf;
+		if (shouldInvaderBeCreated(tpf, numberOfInvaders)) {
+			timePassedFromCreation-=INVADER_CREATION_TIMEOUT;
 			EntityId invader = ed.createEntity();
 
 			Vector3f gatePosition = gateCoordinates;
@@ -65,6 +70,11 @@ public class GateSystem extends BaseAppState {
 					new Position(gatePosition, new Vector3f()),
 					new Model(Model.INVADER));
 		}
+	}
+
+	private boolean shouldInvaderBeCreated(float tpf, int numberOfInvaders) {
+		return numberOfInvaders < MAX_NUMBER_OF_INVADERS &&
+				(timePassedFromCreation += tpf) > INVADER_CREATION_TIMEOUT;
 	}
 
 	private void defineGates() {
