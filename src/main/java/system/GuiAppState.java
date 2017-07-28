@@ -64,7 +64,6 @@ public class GuiAppState extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
-		System.out.println(inputManager.getCursorPosition());
 		if (controller == null) {
 			controller = (GameHudController) gameHUD.getController();
 		}
@@ -75,6 +74,7 @@ public class GuiAppState extends BaseAppState {
 			FxPlatformExecutor.runOnFxApplication(() -> {
 				controller.updateInvaderTimeFroCreation(timePassedFromCreation);
 				controller.setNumberOfInvaders(numberOfInvaders);
+				controller.updateCursorPosition(inputManager.getCursorPosition().toString());
 			});
 
 

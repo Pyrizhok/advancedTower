@@ -22,11 +22,17 @@
                 </HBox>
                 <HBox prefHeight="28.0" prefWidth="213.0">
                     <children>
-                        <Label text="Label"/>
+                        <Label text="creation timeout"/>
                         <TextField fx:id="invaderCreationReloadTimeout"/>
                     </children>
                 </HBox>
                 <ProgressBar fx:id="invaderRespawn" prefWidth="200.0" progress="0.0"/>
+                <HBox prefHeight="28.0" prefWidth="213.0">
+                    <children>
+                        <Label text="cursor position"/>
+                        <TextField fx:id="cursorScreenPosition"/>
+                    </children>
+                </HBox>
                 <Button mnemonicParsing="false" text="Button"/>
             </children>
         </VBox>

@@ -12,6 +12,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.es.*;
 import component.*;
 import configurations.Constants;
+import gui.GameHudController;
 
 public class ControlAppState extends AbstractAppState {
 
