@@ -11,8 +11,6 @@ import component.Defense;
 import component.Model;
 import component.Position;
 
-import java.util.Random;
-
 import static system.GameAppState.BOUND;
 import static system.GameAppState.DEFENCE_INVADER;
 import static system.GameAppState.MAX_NUMBER_OF_INVADERS;

@@ -4,6 +4,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.*;
@@ -30,6 +31,7 @@ public class ControlAppState extends AbstractAppState {
 	private static final Integer BULLET_DECAY_DELTA_MILLIS = 20000;
 
 
+	private InputManager inputManager;
 	private EntityData ed;
 	private SimpleApplication app;
 	private Vector3f locationDefender;
@@ -86,19 +88,6 @@ public class ControlAppState extends AbstractAppState {
 
 		}
 		if (name.equals(MOUSE_LEFT_BUTTON_CLICK) && !isPressed) {
-			watchedEntityDefender.applyChanges();
-			watchedEntityCursor.applyChanges();
-			EntityId bullet = ed.createEntity();
-			Vector3f directionVectorNormalized = locationCursor.subtract(locationDefender).normalize();
-			ed.setComponents(bullet,
-					new Model(Model.BULLET),
-					new Attack(BULLET_ATTACK_POWER),
-					new CollisionShape(BULLET_COLLISION_SHAPE),
-					new Position(new Vector3f(locationDefender.getX(), locationDefender.getY(), locationDefender.getZ()), directionVectorNormalized),
-					new Direction(directionVectorNormalized, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
-					new Speed(BULLET_SPEED),
-					new Decay(BULLET_DECAY_DELTA_MILLIS));
-
 		}
 	};
 
@@ -124,6 +113,7 @@ public class ControlAppState extends AbstractAppState {
 		super.initialize(stateManager, app);
 		this.app = (SimpleApplication) app;
 		ed = this.app.getStateManager().getState(EntityDataState.class).getEntityData();
+		inputManager = app.getInputManager();
 
 		watchedEntityCursor.applyChanges();
 		locationCursor = watchedEntityCursor.get(Position.class).getLocation();

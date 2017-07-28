@@ -30,6 +30,11 @@ dependencies {
     compile 'com.jme3x:jfx:2.184.2016-04-30_145140-ccbd413'
     compile "com.jvpichowski:ZayES-Bullet:0.2.0"
 
+    compile "com.simsilica:lemur-proto:1.9.1"
+    compile("com.simsilica:lemur-props:1.0.1") {
+        force = true;
+    }
+
     compile 'com.simsilica:zay-es:1.2.1'
     compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-api:1.7.13'

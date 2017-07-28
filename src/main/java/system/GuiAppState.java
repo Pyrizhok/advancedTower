@@ -12,8 +12,6 @@ import com.jme3x.jfx.GuiManager;
 import com.jme3x.jfx.cursor.ICursorDisplayProvider;
 import com.jme3x.jfx.cursor.proton.ProtonCursorProvider;
 import gui.GameHudController;
-import javafx.application.Platform;
-import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 public class GuiAppState extends BaseAppState {
@@ -46,10 +44,7 @@ public class GuiAppState extends BaseAppState {
 		guiManager.getjmeFXContainer()
 				.getScene()
 				.setFill(new Color(0, 0, 0, 0));
-//		Integer numberOfInvaders = getState(InvadersAIAppState.class).getNumberOfInvaders();
 		controller = (GameHudController) gameHUD.getController();
-//		controller.setNumberOfInvaders(new TextField(numberOfInvaders.toString()));
-		System.out.println(inputManager.getCursorPosition());
 	}
 
 	@Override
@@ -68,12 +63,12 @@ public class GuiAppState extends BaseAppState {
 	}
 
 	@Override
-	public void update( float tpf ) {
+	public void update(float tpf) {
 		System.out.println(inputManager.getCursorPosition());
-			if (controller == null) {
+		if (controller == null) {
 			controller = (GameHudController) gameHUD.getController();
 		}
-		if (controller!= null) {
+		if (controller != null) {
 			Integer numberOfInvaders = getState(InvadersAIAppState.class).getNumberOfInvaders();
 			float timePassedFromCreation = getState(GateSystem.class).timePassedFromCreation;
 

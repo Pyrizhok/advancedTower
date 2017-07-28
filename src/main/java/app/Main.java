@@ -1,6 +1,5 @@
 package app;
 
-import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.debug.BulletDebugAppState;
 import com.jme3.renderer.RenderManager;
@@ -8,6 +7,7 @@ import com.jme3.system.AppSettings;
 import com.jvpichowski.jme3.states.ESBulletState;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.base.DefaultEntityData;
+import com.simsilica.lemur.GuiGlobals;
 import system.*;
 
 public class Main extends SimpleApplication {
@@ -38,13 +38,15 @@ public class Main extends SimpleApplication {
 				new DecayAppState(),
 				new GuiAppState(),
 				new ControlAppState(),
-				new ESBulletState(entityData)
+				new ESBulletState(entityData),
+				new CameraState()
 		);
 
 	}
 
 	@Override
 	public void simpleInitApp() {
+		GuiGlobals.initialize(this);
 
 		ESBulletState esBulletState = stateManager.getState(ESBulletState.class);
 		esBulletState.onInitialize(() -> {
