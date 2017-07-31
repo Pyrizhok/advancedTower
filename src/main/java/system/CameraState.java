@@ -2,6 +2,7 @@ package system;
 
 import com.jme3.app.*;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.input.KeyInput;
 import com.jme3.math.*;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.*;
@@ -17,6 +18,7 @@ public class CameraState extends BaseAppState
 
 	public static final String DEBUG_VALUE_VECTOR_3F_FORMAT = "%.2f, %.2f, %.2f";
 	public static final String GROUP = "Camera";
+	public static final FunctionId F_CENTER = new FunctionId(GROUP, "Center");
 	public static final FunctionId F_VERTICAL_MOVE = new FunctionId(GROUP, "Vertical Move");
 	public static final FunctionId F_HORIZONTAL_MOVE = new FunctionId(GROUP, "Horizontal Move");
 	public static final FunctionId F_START_PAN = new FunctionId(GROUP, "Start pan");
@@ -26,7 +28,7 @@ public class CameraState extends BaseAppState
 	//num pad short cuts for camera POV
 	public static final FunctionId F_POV_FRONT = new FunctionId(GROUP, "Front POV");
 	public static final FunctionId F_POV_BACK = new FunctionId(GROUP, "Back POV");
-	public static final FunctionId F_POV_LEFT = new FunctionId(GROUP, "Laft POV");
+	public static final FunctionId F_POV_LEFT = new FunctionId(GROUP, "Left POV");
 	public static final FunctionId F_POV_RIGHT = new FunctionId(GROUP, "Right POV");
 	public static final FunctionId F_POV_TOP = new FunctionId(GROUP, "Top POV");
 	public static final FunctionId F_POV_BOTTOM = new FunctionId(GROUP, "Bottom POV");
@@ -110,6 +112,78 @@ public class CameraState extends BaseAppState
 			log.info("Initializing default mappings for:" + F_ZOOM);
 			inputMapper.map(F_ZOOM, Axis.MOUSE_WHEEL);
 		}
+		if( !inputMapper.hasMappings(F_CENTER)) {
+			System.out.println("Initializing default mappings for:" + F_CENTER);
+			inputMapper.map(F_CENTER, KeyInput.KEY_NUMPAD0);
+		}
+
+		if( !inputMapper.hasMappings(F_POV_FRONT)){
+			inputMapper.map(F_POV_FRONT, KeyInput.KEY_1);
+			inputMapper.map(F_POV_BACK, KeyInput.KEY_1, KeyInput.KEY_LCONTROL);
+			inputMapper.map(F_POV_BACK, KeyInput.KEY_1, KeyInput.KEY_RCONTROL);
+			inputMapper.map(F_POV_RIGHT, KeyInput.KEY_3);
+			inputMapper.map(F_POV_LEFT, KeyInput.KEY_3, KeyInput.KEY_RCONTROL);
+			inputMapper.map(F_POV_LEFT, KeyInput.KEY_3, KeyInput.KEY_LCONTROL);
+			inputMapper.map(F_POV_TOP, KeyInput.KEY_7);
+			inputMapper.map(F_POV_BOTTOM, KeyInput.KEY_7, KeyInput.KEY_RCONTROL);
+			inputMapper.map(F_POV_BOTTOM, KeyInput.KEY_7, KeyInput.KEY_LCONTROL);
+		}
+
+		inputMapper.addStateListener(new StateFunctionListener() {
+			@Override
+			public void valueChanged(FunctionId func, InputState value, double tpf) {
+				if(func == F_POV_FRONT && value == InputState.Positive){
+					switchToFront();
+				}
+				if(func == F_POV_BACK && value == InputState.Positive){
+					switchToBack();
+				}
+				if(func == F_POV_LEFT && value == InputState.Positive){
+					switchToLeft();
+				}
+				if(func == F_POV_RIGHT && value == InputState.Positive){
+					switchToRight();
+				}
+				if(func == F_POV_TOP && value == InputState.Positive){
+					switchToTop();
+				}
+				if(func == F_POV_BOTTOM && value == InputState.Positive){
+					switchToBottom();
+				}
+
+			}
+		}, F_POV_FRONT, F_POV_BACK, F_POV_LEFT, F_POV_RIGHT, F_POV_TOP, F_POV_BOTTOM);
+
+	}
+	public void switchToFront(){
+		futureTargetRot = Quaternion.IDENTITY;
+		System.out.println("Front " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
+	}
+	public void switchToBack(){
+		futureTargetRot = new Quaternion().fromAngleAxis(FastMath.PI,Vector3f.UNIT_Y);
+		System.out.println("Back " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
+	}
+	public void switchToLeft(){
+		futureTargetRot = new Quaternion().fromAngleAxis(-FastMath.HALF_PI,Vector3f.UNIT_Y);
+		System.out.println("Left " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
+	}
+	public void switchToRight(){
+		futureTargetRot = new Quaternion().fromAngleAxis(FastMath.HALF_PI,Vector3f.UNIT_Y);
+		System.out.println("Right " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
+	}
+	public void switchToTop(){
+		futureTargetRot = new Quaternion().fromAngleAxis(-FastMath.HALF_PI,Vector3f.UNIT_X);
+		System.out.println("Top " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
+	}
+	public void switchToBottom(){
+		futureTargetRot = new Quaternion().fromAngleAxis(FastMath.HALF_PI,Vector3f.UNIT_X);
+		System.out.println("Bottom " + futureTargetRot);
+		startTargetRot = target.getLocalRotation();
 	}
 
 	@Override
