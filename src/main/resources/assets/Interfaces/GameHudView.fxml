@@ -33,6 +33,18 @@
                         <TextField fx:id="cursorScreenPosition"/>
                     </children>
                 </HBox>
+                <HBox prefHeight="28.0" prefWidth="213.0">
+                    <children>
+                        <Label text="cameraLocation"/>
+                        <TextField fx:id="cameraLocation"/>
+                    </children>
+                </HBox>
+                <HBox prefHeight="28.0" prefWidth="213.0">
+                    <children>
+                        <Label text="cameraDirection"/>
+                        <TextField fx:id="cameraDirection"/>
+                    </children>
+                </HBox>
                 <Button mnemonicParsing="false" text="Button"/>
             </children>
         </VBox>

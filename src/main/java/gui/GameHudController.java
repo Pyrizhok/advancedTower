@@ -8,12 +8,22 @@ public class GameHudController {
 
 	@FXML
 	public TextField numberOfInvader;
+
 	@FXML
 	public TextField invaderCreationReloadTimeout;
+
+	@FXML
+	public TextField cameraLocation;
+
+	@FXML
+	public TextField cameraDirection;
+
 	@FXML
 	public ProgressBar invaderRespawn;
+
 	@FXML
 	public TextField cursorScreenPosition;
+
 	private Integer oldNumberOfInvaders;
 
 	public void setNumberOfInvaders(Integer numberOfInvaders) {
@@ -28,13 +38,25 @@ public class GameHudController {
 	public void updateInvaderTimeFroCreation(Float timeout) {
 		if (timeout != null) {
 			this.invaderCreationReloadTimeout.setText(timeout.toString());
-			this.invaderRespawn.setProgress(timeout/5);
+			this.invaderRespawn.setProgress(timeout / 5);
 		}
 	}
 
 	public void updateCursorPosition(String cursorPosition) {
 		if (cursorScreenPosition != null) {
-			this.cursorScreenPosition.setText(cursorPosition.toString());
+			this.cursorScreenPosition.setText(cursorPosition);
+		}
+	}
+
+	public void updateCameraPosition(String cameraPosition) {
+		if (cameraLocation != null) {
+			this.cameraLocation.setText(cameraPosition);
+		}
+	}
+
+	public void updateCameraDirection(String cameraDirection) {
+		if (cameraDirection != null) {
+			this.cameraDirection.setText(cameraDirection);
 		}
 	}
 

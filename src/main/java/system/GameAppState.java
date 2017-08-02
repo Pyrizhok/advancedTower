@@ -42,7 +42,9 @@ public class GameAppState extends BaseAppState {
 		getState(ControlAppState.class).setWatchedEntityDefender(ed.watchEntity(defender, Position.class));
 
 		this.ed.setComponents(defender,
-				new Attack(1),
+//				new Attack(1),
+				new Defense(3),
+				new CollisionShape(1),
 				new Position(new Vector3f(0, -20, 0), new Vector3f()),
 				new Model(Model.DEFENDER));
 	}
@@ -72,6 +74,7 @@ public class GameAppState extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
+		System.out.println("here");
 	}
 
 }

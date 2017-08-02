@@ -20,10 +20,12 @@ public class GuiAppState extends BaseAppState {
 	private FXMLHud gameHUD;
 	private GameHudController controller;
 	private InputManager inputManager;
+	private Application app;
 
 	@Override
 	protected void initialize(Application app) {
-		Node guiNode = ((SimpleApplication) app).getGuiNode();
+		this.app = app;
+		Node guiNode = ((SimpleApplication) this.app).getGuiNode();
 		boolean ifFullScreen = false;
 		AssetManager assetManager = app.getAssetManager();
 
@@ -75,6 +77,8 @@ public class GuiAppState extends BaseAppState {
 				controller.updateInvaderTimeFroCreation(timePassedFromCreation);
 				controller.setNumberOfInvaders(numberOfInvaders);
 				controller.updateCursorPosition(inputManager.getCursorPosition().toString());
+				controller.updateCameraPosition(app.getCamera().getLocation().toString());
+				controller.updateCameraDirection(app.getCamera().getDirection().toString());
 			});
 
 

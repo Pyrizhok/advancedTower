@@ -129,29 +129,26 @@ public class CameraState extends BaseAppState
 			inputMapper.map(F_POV_BOTTOM, KeyInput.KEY_7, KeyInput.KEY_LCONTROL);
 		}
 
-		inputMapper.addStateListener(new StateFunctionListener() {
-			@Override
-			public void valueChanged(FunctionId func, InputState value, double tpf) {
-				if(func == F_POV_FRONT && value == InputState.Positive){
-					switchToFront();
-				}
-				if(func == F_POV_BACK && value == InputState.Positive){
-					switchToBack();
-				}
-				if(func == F_POV_LEFT && value == InputState.Positive){
-					switchToLeft();
-				}
-				if(func == F_POV_RIGHT && value == InputState.Positive){
-					switchToRight();
-				}
-				if(func == F_POV_TOP && value == InputState.Positive){
-					switchToTop();
-				}
-				if(func == F_POV_BOTTOM && value == InputState.Positive){
-					switchToBottom();
-				}
-
+		inputMapper.addStateListener((func, value, tpf) -> {
+			if(func == F_POV_FRONT && value == InputState.Positive){
+				switchToFront();
 			}
+			if(func == F_POV_BACK && value == InputState.Positive){
+				switchToBack();
+			}
+			if(func == F_POV_LEFT && value == InputState.Positive){
+				switchToLeft();
+			}
+			if(func == F_POV_RIGHT && value == InputState.Positive){
+				switchToRight();
+			}
+			if(func == F_POV_TOP && value == InputState.Positive){
+				switchToTop();
+			}
+			if(func == F_POV_BOTTOM && value == InputState.Positive){
+				switchToBottom();
+			}
+
 		}, F_POV_FRONT, F_POV_BACK, F_POV_LEFT, F_POV_RIGHT, F_POV_TOP, F_POV_BOTTOM);
 
 	}
@@ -248,6 +245,9 @@ public class CameraState extends BaseAppState
 				futureTargetPos = null;
 			}
 		}
+		// display camera coordinates
+		camera.getLocation();
+		camera.getDirection();
 	}
 
 	@Override

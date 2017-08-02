@@ -5,12 +5,11 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector3f;
-import com.simsilica.es.Entity;
-import com.simsilica.es.EntityData;
-import com.simsilica.es.EntitySet;
-import com.simsilica.es.Filters;
-import component.Model;
-import component.Position;
+import com.simsilica.es.*;
+import component.*;
+import configurations.Constants;
+
+import java.util.Optional;
 
 public class InvadersAIAppState extends AbstractAppState {
 
@@ -18,9 +17,13 @@ public class InvadersAIAppState extends AbstractAppState {
 	private SimpleApplication app;
 	private EntityData ed;
 	private EntitySet invaders;
+	private EntitySet defenders;
 	private float xDir;
 	private float yDir;
 	private int numberOfInvaders;
+
+	private static float INVADER_SHOOT_RELOAD_TIMEOUT = 5f;
+	public float timePassedFromShoot = 0f;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
@@ -33,6 +36,10 @@ public class InvadersAIAppState extends AbstractAppState {
 				Filters.fieldEquals(Model.class, FIELD_NAME, Model.INVADER),
 				Model.class,
 				Position.class);
+
+		defenders = ed.getEntities(
+				Filters.fieldEquals(Model.class, FIELD_NAME, Model.DEFENDER),
+				Position.class);
 		xDir = 1f;
 		yDir = -1f;
 	}
@@ -44,8 +51,36 @@ public class InvadersAIAppState extends AbstractAppState {
 	@Override
 	public void update(float tpf) {
 		invaders.applyChanges();
+		defenders.applyChanges();
 		wabbeling(tpf);
+		timePassedFromShoot += tpf;
+		if ((timePassedFromShoot += tpf) > INVADER_SHOOT_RELOAD_TIMEOUT) {
+			timePassedFromShoot -= INVADER_SHOOT_RELOAD_TIMEOUT;
+			groupShoot(tpf);
+		}
 		numberOfInvaders = invaders.size();
+	}
+
+	private void groupShoot(float tpf) {
+		for (Entity e : invaders) {
+			Vector3f bulletStartPosition = e.get(Position.class).getLocation();
+			Optional<Entity> entity = defenders.stream().findAny();
+			if (!entity.isPresent()) {
+				continue;
+			}
+			EntityId bullet = ed.createEntity();
+			Vector3f defenderPosition = entity.get().get(Position.class).getLocation();
+			Vector3f directionVectorNormalized = defenderPosition.subtract(bulletStartPosition).normalize();
+			Vector3f newVector3f = bulletStartPosition.add(directionVectorNormalized.mult(3f));
+			ed.setComponents(bullet,
+					new Model(Model.BULLET),
+					new Attack(Constants.BULLET_ATTACK_POWER),
+					new CollisionShape(Constants.BULLET_COLLISION_SHAPE),
+					new Position(newVector3f, directionVectorNormalized),
+					new Direction(directionVectorNormalized, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
+					new Speed(Constants.BULLET_SPEED),
+					new Decay(Constants.BULLET_DECAY_DELTA_MILLIS));
+		}
 	}
 
 	private void wabbeling(float tpf) {
