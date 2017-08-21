@@ -4,11 +4,16 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.*;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
+import com.jme3.scene.Node;
 import com.simsilica.es.*;
 import component.*;
 import configurations.Constants;
@@ -41,6 +46,7 @@ public class ControlAppState extends AbstractAppState {
 	private WatchedEntity watchedEntityCursor;
 	private float speedDefender = 1f;
 	private float speedCursor = 1f;
+
 	private final AnalogListener analogListener = (String name, float value, float tpf) -> {
 		watchedEntityDefender.applyChanges();
 		watchedEntityCursor.applyChanges();
@@ -90,8 +96,32 @@ public class ControlAppState extends AbstractAppState {
 
 		}
 		if (name.equals(MOUSE_LEFT_BUTTON_CLICK) && !isPressed) {
+			createRay();
 		}
 	};
+
+	private void createRay() {
+		CollisionResults results = new CollisionResults();
+		Vector2f click2d = inputManager.getCursorPosition().clone();
+		Camera camera = this.app.getStateManager().getState(CameraState.class).getCamera();
+		Vector3f click3d = camera.getWorldCoordinates(
+				click2d, 0f).clone();
+		Vector3f dir = camera.getWorldCoordinates(
+				click2d, 1f).subtractLocal(click3d).normalizeLocal();
+		Ray ray = new Ray(click3d, dir);
+		Node shootables = new Node("Shootables");
+		shootables.collideWith(ray, results);
+		System.out.printf("collide with : " + results.size());
+		EntityId bullet = ed.createEntity();
+		ed.setComponents(bullet,
+				new Model(Model.BULLET),
+				new Attack(BULLET_ATTACK_POWER),
+				new CollisionShape(BULLET_COLLISION_SHAPE),
+				new Position(click3d, dir),
+				new Direction(dir, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
+				new Speed(BULLET_SPEED),
+				new Decay(BULLET_DECAY_DELTA_MILLIS));
+	}
 
 	public WatchedEntity getWatchedEntityCursor() {
 		return watchedEntityCursor;

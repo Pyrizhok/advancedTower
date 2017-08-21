@@ -39,6 +39,7 @@ public class InvadersAIAppState extends AbstractAppState {
 
 		defenders = ed.getEntities(
 				Filters.fieldEquals(Model.class, FIELD_NAME, Model.DEFENDER),
+				Model.class,
 				Position.class);
 		xDir = 1f;
 		yDir = -1f;

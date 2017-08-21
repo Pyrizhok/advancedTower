@@ -74,7 +74,7 @@ public class GameAppState extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
-		System.out.println("here");
+
 	}
 
 }

@@ -8,6 +8,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.es.Entity;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntitySet;
+import com.simsilica.mathd.Vec3d;
 import component.*;
 
 
@@ -62,6 +63,9 @@ public class CollisionAppState extends AbstractAppState {
 	}
 
 	private boolean hasCollides(Entity e1, Entity e2) {
+		if (e1.getId().equals(e2.getId())) {
+			return false;
+		}
 		CollisionShape e1Shape = e1.get(CollisionShape.class);
 		CollisionShape e2Shape = e2.get(CollisionShape.class);
 		Position e1Pos = e1.get(Position.class);
@@ -72,6 +76,17 @@ public class CollisionAppState extends AbstractAppState {
 		float distance = e1Pos.getLocation().distanceSquared(e2Pos.getLocation());
 
 		return distance < threshold;
+	}
+	protected Vec3d getGroundTarget() {
+		Vector3f loc = this.app.getCamera().getLocation();
+		Vector3f dir = this.app.getCamera().getDirection();
+		if(dir.y >= 0.0F) {
+			return null;
+		} else {
+			float count = loc.y / -dir.y;
+			Vector3f target = loc.add(dir.mult(count));
+			return new Vec3d(target);
+		}
 	}
 
 	@Override
