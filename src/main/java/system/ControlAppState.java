@@ -79,7 +79,7 @@ public class ControlAppState extends AbstractAppState {
 		locationCursor = watchedEntityCursor.get(Position.class).getLocation();
 	};
 	private final ActionListener actionListener = (String name, boolean isPressed, float tpf) -> {
- 		watchedEntityDefender.applyChanges();
+		watchedEntityDefender.applyChanges();
 		watchedEntityCursor.applyChanges();
 		if (name.equals(SHOOT) && !isPressed) {
 			EntityId bullet = ed.createEntity();
@@ -106,6 +106,7 @@ public class ControlAppState extends AbstractAppState {
 		Camera camera = this.app.getStateManager().getState(CameraState.class).getCamera();
 		Vector3f click3d = camera.getWorldCoordinates(
 				click2d, 0f).clone();
+
 		Vector3f dir = camera.getWorldCoordinates(
 				click2d, 1f).subtractLocal(click3d).normalizeLocal();
 		Ray ray = new Ray(click3d, dir);
@@ -113,11 +114,15 @@ public class ControlAppState extends AbstractAppState {
 		shootables.collideWith(ray, results);
 		System.out.printf("collide with : " + results.size());
 		EntityId bullet = ed.createEntity();
+
+		Vector3f directionVectorNormalized = click3d.subtract(locationDefender).normalize();
+		Vector3f bulletCreationPosition = locationDefender.add(directionVectorNormalized.mult(3f));
+
 		ed.setComponents(bullet,
 				new Model(Model.BULLET),
 				new Attack(BULLET_ATTACK_POWER),
 				new CollisionShape(BULLET_COLLISION_SHAPE),
-				new Position(click3d, dir),
+				new Position(bulletCreationPosition, dir),
 				new Direction(dir, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
 				new Speed(BULLET_SPEED),
 				new Decay(BULLET_DECAY_DELTA_MILLIS));
@@ -153,18 +158,18 @@ public class ControlAppState extends AbstractAppState {
 		locationDefender = watchedEntityDefender.get(Position.class).getLocation();
 
 
-		this.app.getInputManager().addMapping(DEFENDER_MOVE_LEFT, new KeyTrigger(KeyInput.KEY_A));
-		this.app.getInputManager().addMapping(DEFENDER_MOVE_RIGHT, new KeyTrigger(KeyInput.KEY_D));
-		this.app.getInputManager().addMapping(DEFENDER_MOVE_UP, new KeyTrigger(KeyInput.KEY_W));
-		this.app.getInputManager().addMapping(DEFENDER_MOVE_DOWN, new KeyTrigger(KeyInput.KEY_S));
+		inputManager.addMapping(DEFENDER_MOVE_LEFT, new KeyTrigger(KeyInput.KEY_A));
+		inputManager.addMapping(DEFENDER_MOVE_RIGHT, new KeyTrigger(KeyInput.KEY_D));
+		inputManager.addMapping(DEFENDER_MOVE_UP, new KeyTrigger(KeyInput.KEY_W));
+		inputManager.addMapping(DEFENDER_MOVE_DOWN, new KeyTrigger(KeyInput.KEY_S));
 
-		this.app.getInputManager().addMapping(CURSOR_MOVE_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
-		this.app.getInputManager().addMapping(CURSOR_MOVE_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
-		this.app.getInputManager().addMapping(CURSOR_MOVE_UP, new KeyTrigger(KeyInput.KEY_UP));
-		this.app.getInputManager().addMapping(CURSOR_MOVE_DOWN, new KeyTrigger(KeyInput.KEY_DOWN));
+		inputManager.addMapping(CURSOR_MOVE_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
+		inputManager.addMapping(CURSOR_MOVE_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
+		inputManager.addMapping(CURSOR_MOVE_UP, new KeyTrigger(KeyInput.KEY_UP));
+		inputManager.addMapping(CURSOR_MOVE_DOWN, new KeyTrigger(KeyInput.KEY_DOWN));
 
 
-		this.app.getInputManager().addListener(analogListener
+		inputManager.addListener(analogListener
 				, DEFENDER_MOVE_LEFT
 				, DEFENDER_MOVE_RIGHT
 				, DEFENDER_MOVE_UP
@@ -175,13 +180,13 @@ public class ControlAppState extends AbstractAppState {
 				, CURSOR_MOVE_DOWN
 		);
 
-		this.app.getInputManager().addMapping(SHOOT,
+		inputManager.addMapping(SHOOT,
 				new KeyTrigger(KeyInput.KEY_SPACE));
 
-		this.app.getInputManager().addMapping(MOUSE_LEFT_BUTTON_CLICK,
+		inputManager.addMapping(MOUSE_LEFT_BUTTON_CLICK,
 				new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 
-		this.app.getInputManager().addListener(actionListener, SHOOT, MOUSE_LEFT_BUTTON_CLICK);
+		inputManager.addListener(actionListener, SHOOT, MOUSE_LEFT_BUTTON_CLICK);
 	}
 
 	@Override
