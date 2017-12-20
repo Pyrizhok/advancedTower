@@ -17,8 +17,8 @@ public class Main extends SimpleApplication {
 		Main app = new Main(entityData);
 		app.setShowSettings(false);
 		AppSettings settings = new AppSettings(true);
-		settings.put("Width", 1280);
-		settings.put("Height", 720);
+		settings.put("Width", 800);
+		settings.put("Height", 600);
 		settings.put("Title", "AdvancedTower");
 		settings.put("VSync", true);
 		settings.put("Samples", 4);
@@ -50,8 +50,6 @@ public class Main extends SimpleApplication {
 
 		ESBulletState esBulletState = stateManager.getState(ESBulletState.class);
 		esBulletState.onInitialize(() -> {
-			//Add Debug State to debug physics
-			//As you see there are getters for physics space and so on.
 			BulletDebugAppState debugAppState = new BulletDebugAppState(esBulletState.getPhysicsSpace());
 			getStateManager().attach(debugAppState);
 		});

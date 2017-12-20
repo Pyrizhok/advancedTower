@@ -3,7 +3,15 @@ package system;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jvpichowski.jme3.es.bullet.components.BoxShape;
+import com.jvpichowski.jme3.es.bullet.components.Friction;
+import com.jvpichowski.jme3.es.bullet.components.RigidBody;
+import com.jvpichowski.jme3.es.bullet.components.WarpPosition;
 import com.simsilica.es.EntityData;
 import com.simsilica.es.EntityId;
 import component.*;
@@ -27,6 +35,7 @@ public class GameAppState extends BaseAppState {
 		defineArea();
 		defineDefender();
 		defineCursor();
+		initFloor();
 
 	}
 
@@ -55,6 +64,20 @@ public class GameAppState extends BaseAppState {
 				new Position(new Vector3f(), new Vector3f()),
 				new Model(Model.CURSOR));
 		getState(ControlAppState.class).setWatchedEntityCursor(ed.watchEntity(cursor, Position.class));
+	}
+
+	public void initFloor() {
+		AssetManager assetManager = this.app.getAssetManager();
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		mat.setColor("Color", ColorRGBA.Brown);
+		EntityId floorEntity = ed.createEntity();
+		ed.setComponents(floorEntity,
+				new WarpPosition(new Vector3f(0, -0.1f, 0), Quaternion.DIRECTION_Z.clone()),
+				new RigidBody(false, 0),
+				new Friction(0.6f),
+				new BoxShape(new Vector3f(10f, 0.1f, 5f)),
+				new BoxComponent(new Vector3f(10f, 0.1f, 5f)),
+				new MaterialComponent(mat));
 	}
 
 	@Override

@@ -100,13 +100,18 @@ public class ModelFactory {
 		return geometry;
 	}
 
-	private Geometry defineDefenderGeometry() {
+	private Spatial defineDefenderGeometry() {
+		Node result = new Node("defender");
 		Material material = new Material(assetManager, ASSETS_MAT_DEFS_FOG_UNSHADED_J3MD);
 		ColorRGBA colorRGBA = ColorRGBA.DarkGray;
 		Box box = new Box(Vector3f.ZERO, Vector3f.UNIT_XYZ);
 		Geometry defenderGeometry = new Geometry("Box", box);
 		material.setColor("Color", colorRGBA);
 		defenderGeometry.setMaterial(material);
-		return defenderGeometry;
+
+		result.attachChild(defenderGeometry);
+		result.attachChild(SpatialUtils.attachCoordinateAxes(Vector3f.UNIT_XYZ, assetManager));
+
+		return result;
 	}
 }

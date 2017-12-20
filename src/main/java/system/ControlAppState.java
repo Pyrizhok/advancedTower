@@ -9,14 +9,17 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.*;
-import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.material.Material;
+import com.jme3.math.*;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
+import com.jvpichowski.jme3.es.bullet.components.RigidBody;
+import com.jvpichowski.jme3.es.bullet.components.SphereShape;
+import com.jvpichowski.jme3.es.bullet.components.WarpPosition;
+import com.jvpichowski.jme3.es.bullet.components.WarpVelocity;
 import com.simsilica.es.*;
 import component.*;
-import configurations.Constants;
+import static configurations.Constants.*;
 import gui.GameHudController;
 
 public class ControlAppState extends AbstractAppState {
@@ -31,11 +34,6 @@ public class ControlAppState extends AbstractAppState {
 	private static final String CURSOR_MOVE_UP = "CURSOR_MOVE_UP";
 	private static final String CURSOR_MOVE_DOWN = "CURSOR_MOVE_DOWN";
 	private static final String MOUSE_LEFT_BUTTON_CLICK = "MOUSE_LEFT_BUTTON_CLICK";
-	private static final Integer BULLET_ATTACK_POWER = 1;
-	private static final Integer BULLET_COLLISION_SHAPE = 1;
-	private static final Integer BULLET_SPEED = 20;
-	private static final Integer BULLET_DECAY_DELTA_MILLIS = 20000;
-
 
 	private InputManager inputManager;
 	private EntityData ed;
@@ -50,18 +48,20 @@ public class ControlAppState extends AbstractAppState {
 	private final AnalogListener analogListener = (String name, float value, float tpf) -> {
 		watchedEntityDefender.applyChanges();
 		watchedEntityCursor.applyChanges();
+		Camera camera = this.app.getStateManager().getState(CameraState.class).getCamera();
+		Vector3f direction = camera.getDirection();
 
 		if (name.equals(DEFENDER_MOVE_LEFT)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() - speedDefender, locationDefender.getY(), 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() - speedDefender, locationDefender.getY(), 0), direction));
 		}
 		if (name.equals(DEFENDER_MOVE_RIGHT)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() + speedDefender, locationDefender.getY(), 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX() + speedDefender, locationDefender.getY(), 0), direction));
 		}
 		if (name.equals(DEFENDER_MOVE_UP)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() + speedDefender, 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() + speedDefender, 0), direction));
 		}
 		if (name.equals(DEFENDER_MOVE_DOWN)) {
-			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() - speedDefender, 0), new Vector3f()));
+			watchedEntityDefender.set(new Position(new Vector3f(locationDefender.getX(), locationDefender.getY() - speedDefender, 0), direction));
 		}
 		if (name.equals(CURSOR_MOVE_RIGHT)) {
 			watchedEntityCursor.set(new Position(new Vector3f(locationCursor.getX() + speedCursor, locationCursor.getY(), 0), new Vector3f()));
@@ -78,27 +78,34 @@ public class ControlAppState extends AbstractAppState {
 		locationDefender = watchedEntityDefender.get(Position.class).getLocation();
 		locationCursor = watchedEntityCursor.get(Position.class).getLocation();
 	};
+
 	private final ActionListener actionListener = (String name, boolean isPressed, float tpf) -> {
 		watchedEntityDefender.applyChanges();
 		watchedEntityCursor.applyChanges();
 		if (name.equals(SHOOT) && !isPressed) {
-			EntityId bullet = ed.createEntity();
-			Vector3f directionVectorNormalized = locationCursor.subtract(locationDefender).normalize();
-			Vector3f bulletCreationPosition = locationDefender.add(directionVectorNormalized.mult(3f));
-			ed.setComponents(bullet,
-					new Model(Model.BULLET),
-					new Attack(BULLET_ATTACK_POWER),
-					new CollisionShape(BULLET_COLLISION_SHAPE),
-					new Position(bulletCreationPosition, directionVectorNormalized),
-					new Direction(directionVectorNormalized, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
-					new Speed(BULLET_SPEED),
-					new Decay(BULLET_DECAY_DELTA_MILLIS));
-
+			createBullet();
 		}
+//		if (name.equals(MOUSE_LEFT_BUTTON_CLICK) && !isPressed) {
+//			createRay();
+//		}
 		if (name.equals(MOUSE_LEFT_BUTTON_CLICK) && !isPressed) {
-			createRay();
+			addBullet();
 		}
 	};
+
+	private void createBullet() {
+		EntityId bullet = ed.createEntity();
+		Vector3f directionVectorNormalized = locationCursor.subtract(locationDefender).normalize();
+		Vector3f bulletCreationPosition = locationDefender.add(directionVectorNormalized.mult(3f));
+		ed.setComponents(bullet,
+				new Model(Model.BULLET),
+				new Attack(BULLET_ATTACK_POWER),
+				new CollisionShape(BULLET_COLLISION_SHAPE),
+				new Position(bulletCreationPosition, directionVectorNormalized),
+				new Direction(directionVectorNormalized, ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
+				new Speed(BULLET_SPEED),
+				new Decay(BULLET_DECAY_DELTA_MILLIS));
+	}
 
 	private void createRay() {
 		CollisionResults results = new CollisionResults();
@@ -112,20 +119,53 @@ public class ControlAppState extends AbstractAppState {
 		Ray ray = new Ray(click3d, dir);
 		Node shootables = new Node("Shootables");
 		shootables.collideWith(ray, results);
-		System.out.printf("collide with : " + results.size());
+		System.out.println("collide with : " + results.size());
 		EntityId bullet = ed.createEntity();
 
 		Vector3f directionVectorNormalized = click3d.subtract(locationDefender).normalize();
 		Vector3f bulletCreationPosition = locationDefender.add(directionVectorNormalized.mult(3f));
+		System.out.println("bulletCreationPosition : " + bulletCreationPosition);
 
 		ed.setComponents(bullet,
 				new Model(Model.BULLET),
 				new Attack(BULLET_ATTACK_POWER),
 				new CollisionShape(BULLET_COLLISION_SHAPE),
 				new Position(bulletCreationPosition, dir),
-				new Direction(dir, Constants.ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
+				new Direction(dir, ON_GETTING_TO_STRATEGY.CONTINUE_MOVEMENT_TO, null),
 				new Speed(BULLET_SPEED),
 				new Decay(BULLET_DECAY_DELTA_MILLIS));
+	}
+
+	public void addBullet() {
+		EntityId bullet = ed.createEntity();
+		Material bulletMat = new Material(this.app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+		bulletMat.setColor("Color", ColorRGBA.Blue);
+
+		Vector2f click2d = inputManager.getCursorPosition().clone();
+		Camera camera = this.app.getStateManager().getState(CameraState.class).getCamera();
+		Vector3f click3d = camera.getWorldCoordinates(
+				click2d, 0f).clone();
+
+		Vector3f dir = camera.getWorldCoordinates(
+				click2d, 1f).subtractLocal(click3d).normalizeLocal();
+
+		Vector3f directionVectorNormalized = click3d.subtract(locationDefender).normalize();
+
+		Vector3f bulletCreationPosition = locationDefender.add(directionVectorNormalized.mult(3f));
+		Vector3f direction = watchedEntityDefender.get(Position.class).getRotation();
+		System.out.println(direction);
+		Vector3f linearVelocity = new Vector3f(direction).mult(1000);
+		System.out.println("linearVelocity " + linearVelocity);
+		WarpVelocity warpVelocity = new WarpVelocity(linearVelocity, new Vector3f());
+		ed.setComponents(bullet,
+				new MaterialComponent(bulletMat),
+				new SphereComponent(0.4f),
+				new WarpPosition(bulletCreationPosition, Quaternion.DIRECTION_Z.clone()),
+//				new WarpVelocity(camera.getDirection().mult(25), new Vector3f()),
+//				new WarpVelocity(direction.mult(250), new Vector3f()),
+				warpVelocity,
+				new SphereShape(0.4f),
+				new RigidBody(false, 1));
 	}
 
 	public WatchedEntity getWatchedEntityCursor() {

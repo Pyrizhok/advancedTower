@@ -149,7 +149,13 @@ public class CameraState extends BaseAppState
 				switchToBottom();
 			}
 
-		}, F_POV_FRONT, F_POV_BACK, F_POV_LEFT, F_POV_RIGHT, F_POV_TOP, F_POV_BOTTOM);
+		}
+				, F_POV_FRONT
+				, F_POV_BACK
+				, F_POV_LEFT
+				, F_POV_RIGHT
+				, F_POV_TOP
+				, F_POV_BOTTOM);
 
 	}
 	public void switchToFront(){

@@ -57,7 +57,7 @@ public class InvadersAIAppState extends AbstractAppState {
 		timePassedFromShoot += tpf;
 		if ((timePassedFromShoot += tpf) > INVADER_SHOOT_RELOAD_TIMEOUT) {
 			timePassedFromShoot -= INVADER_SHOOT_RELOAD_TIMEOUT;
-			groupShoot(tpf);
+//			groupShoot(tpf);
 		}
 		numberOfInvaders = invaders.size();
 	}

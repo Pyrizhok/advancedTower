@@ -58,7 +58,7 @@ public class GateSystem extends BaseAppState {
 
 		timePassedFromCreation += tpf;
 		if (shouldInvaderBeCreated(tpf, numberOfInvaders)) {
-			timePassedFromCreation-=INVADER_CREATION_TIMEOUT;
+			timePassedFromCreation -= INVADER_CREATION_TIMEOUT;
 			EntityId invader = ed.createEntity();
 
 			Vector3f gatePosition = gateCoordinates;
